@@ -1,5 +1,6 @@
-app.use(session {
-  secret: 'junkman buick orlando',
-  resave: false,
-  saveUnitialized: true
-});
+module.exports = {
+  secret: "python buick orlando",
+  resave: true,
+  saveUninitialized: true,
+  cookie: {maxAge: 900000}
+};
