@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const sessionConfig = require("./sessionConfig");
 const app = express();
-const port = process.env.port || 3000;
+const port = process.env.port || 3003;
 
 var users = [{ username: "rick", password: "iron" }];
 
@@ -34,7 +34,22 @@ app.get("/login", function(req, res) {
   res.render("login");
 });
 
+
+app.get("/logout", function(req, res) {
+  res.render('login');
+});
+
+app.post("/", function(req, res) {
+  // if (req.body.logout == "logout") {
+    req.session.destroy();
+     console.log('LOGOUT');
+    res.redirect("/login");
+  // }
+});
+
+
 app.post("/login", function(req, res) {
+  console.log('4444');
   if (!req.body || !req.body.username || !req.body.password) {
     return res.redirect("login");
   }
