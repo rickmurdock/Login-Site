@@ -6,7 +6,7 @@ const sessionConfig = require("./sessionConfig");
 const app = express();
 const port = process.env.port || 3003;
 
-var users = [{ username: "rick", password: "iron" }];
+var users = [{ username: "rick", password: "iron", clicks: 0}];
 
 // SET VIEW ENGINE
 app.engine("mustache", mustacheExpress());
@@ -34,22 +34,20 @@ app.get("/login", function(req, res) {
   res.render("login");
 });
 
+app.get("/signup", function(req, res) {
+  res.render("signup");
+});
 
 app.get("/logout", function(req, res) {
   res.render('login');
 });
 
 app.post("/", function(req, res) {
-  // if (req.body.logout == "logout") {
     req.session.destroy();
-     console.log('LOGOUT');
     res.redirect("/login");
-  // }
 });
 
-
 app.post("/login", function(req, res) {
-  console.log('4444');
   if (!req.body || !req.body.username || !req.body.password) {
     return res.redirect("login");
   }
@@ -73,6 +71,34 @@ app.post("/login", function(req, res) {
   } else {
     return res.redirect("/login");
   }
+});
+
+app.post("/signup", function(req, res) {
+  if (!req.body || !req.body.username || !req.body.password) {
+    res.redirect("/");
+  }
+
+  var newUser = {
+    username: req.body.username,
+    password: req.body.password,
+    clicks: 0
+  }
+    
+  users.push(newUser);
+  return res.redirect("/login");
+});
+
+app.post("/click", function(req, res) {
+  var requestingUser = req.session.user
+  var userRecord;
+  users.forEach(function(item) {
+    if (item.username === requestingUser.username) {
+      userRecord = item;
+      requestingUser.clicks = userRecord.clicks += 1;
+    }
+  });
+
+  return res.render("index", { user: req.session.user });
 });
 
 app.listen(port, function() {
